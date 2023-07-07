@@ -8,21 +8,14 @@ VM: https://www.qemu.org/
 Rust Documentation: https://doc.rust-lang.org/book/
 
 # First time on dev device
-1) Install rust-src
-> rustup component add rust-src
-2) Install Bootimage
-> cargo install bootimage
-3) Install llvm-tools
-> rustup component add llvm-tools-preview
+1) Install rust-src  `rustup component add rust-src`
+2) Install Bootimage  `cargo install bootimage`
+3) Install llvm-tools  `rustup component add llvm-tools-preview`
 
 # Start Program:
-2) Build
-> cargo build
-5) Run
-> cargo run
+1) Build  `cargo build`
+2) Run  `cargo run`
 
 # Test Kernel (Qemu required):
-3) Create Bootimage
-> cargo bootimage
-4) Start Kernel
-> qemu-system-x86_64 -drive format=raw,file=target/x86_64-lauch-os/debug/bootimage-lauch_os.bin
+1) Create Bootimage  `cargo bootimage`
+2) Start Kernel  `qemu-system-x86_64 -drive format=raw,file=target/x86_64-lauch-os/debug/bootimage-lauch_os.bin`
