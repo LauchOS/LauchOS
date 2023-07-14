@@ -12,10 +12,14 @@ Rust Documentation: https://doc.rust-lang.org/book/
 2) Install Bootimage  `cargo install bootimage`
 3) Install llvm-tools  `rustup component add llvm-tools-preview`
 
-# Start Program:
+# Start Program (Qemu required):
 1) Build  `cargo build`
 2) Run  `cargo run`
 
-# Test Kernel (Qemu required):
+# Start Kernel (Other option):
 1) Create Bootimage  `cargo bootimage`
 2) Start Kernel  `qemu-system-x86_64 -drive format=raw,file=target/x86_64-lauch-os/debug/bootimage-lauch_os.bin`
+
+# Put it on USB-Stick:
+1) sdX is your USB-Stick `dd if=target/x86_64-blog_os/debug/bootimage-blog_os.bin of=/dev/sdX && sync`
+!!IMPORTANT!! Be sure it is the right device

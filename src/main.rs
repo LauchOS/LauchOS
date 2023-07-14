@@ -1,3 +1,4 @@
+#![feature(exclusive_range_pattern)]
 #![no_std] // No rust std library
 #![no_main] // Don't start with main function
 
@@ -10,7 +11,7 @@ mod io;
 // Start function (Linker looks for it)
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    io::binary_writer::print_something();
+    println!("Hello World");
 
     loop {}
 }
