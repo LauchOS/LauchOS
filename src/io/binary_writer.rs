@@ -6,6 +6,7 @@ use crate::vga_buffer::BUFFER_HEIGHT;
 use crate::vga_buffer::BUFFER_WIDTH;
 
 pub struct BinaryWriter {
+    row_position: usize,
     column_position: usize,
     color_code: ColorCode,
     buffer: &'static mut VGABuffer,
@@ -19,14 +20,12 @@ impl BinaryWriter {
                 if self.column_position >= BUFFER_WIDTH {
                     self.new_line();
                 }
-
-                let row = BUFFER_HEIGHT - 1;
-                let col = self.column_position;
-
-                let color_code = self.color_code;
-                self.buffer.chars[row][col] = ScreenChar {
+                if self.row_position >= BUFFER_HEIGHT {
+                    panic!("Out of Bounds");
+                }
+                self.buffer.chars[self.row_position][self.column_position] = ScreenChar {
                     ascii_character: byte,
-                    color_code,
+                    color_code: self.color_code,
                 };
                 self.column_position += 1;
             }
@@ -51,6 +50,7 @@ impl BinaryWriter {
 pub fn print_something(){
     let mut writer = BinaryWriter {
         column_position: 0,
+        row_position: 80,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut VGABuffer) },
     };
