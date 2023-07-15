@@ -3,20 +3,16 @@
 #![no_main] // Don't start with main function
 
 use core::panic::PanicInfo;
+use lauch_os::println;
 
-mod vga_buffer;
-mod general;
-mod io;
-
-// Start function (Linker looks for it)
+/// Start-Function of the kernel. (Linker looks for it)
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello World");
-
     loop {}
 }
 
-// Panic function
+/// Main Panic-Function for error handling.
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     loop {}

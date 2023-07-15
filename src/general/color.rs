@@ -1,3 +1,4 @@
+/// Color enum with hex values.
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
@@ -18,14 +19,4 @@ pub enum Color {
     Pink = 0xd,
     Yellow = 0xe,
     White = 0xf,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(transparent)]
-pub struct ColorCode(u8);
-
-impl ColorCode {
-    pub fn new(foreground_color: Color, background_color: Color) -> ColorCode {
-        ColorCode((background_color as u8) << 4 | (foreground_color as u8))
-    }
 }

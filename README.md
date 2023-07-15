@@ -21,5 +21,5 @@ Rust Documentation: https://doc.rust-lang.org/book/
 2) Start Kernel  `qemu-system-x86_64 -drive format=raw,file=target/x86_64-lauch-os/debug/bootimage-lauch_os.bin`
 
 # Put it on USB-Stick:
-1) sdX is your USB-Stick `dd if=target/x86_64-blog_os/debug/bootimage-blog_os.bin of=/dev/sdX && sync`
+1) sdX is your USB-Stick `sudo dd if=target/x86_64-lauch-os/debug/bootimage-lauch_os.bin of=/dev/sdX && sync`
 !!IMPORTANT!! Be sure it is the right device
