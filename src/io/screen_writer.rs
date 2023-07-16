@@ -1,12 +1,9 @@
-use crate::vga_buffer::screen_char::ColorCode;
+use crate::vga_buffer::screen_char::*;
 use crate::general::color::Color;
 use crate::vga_buffer::vga_buffer::VGABuffer;
-use crate::vga_buffer::screen_char::ScreenChar;
-use crate::vga_buffer::BUFFER_HEIGHT;
-use crate::vga_buffer::BUFFER_WIDTH;
+use crate::vga_buffer::*;
 
-use core::fmt::Write;
-use core::fmt::Result;
+use core::fmt::*;
 use lazy_static::lazy_static;
 use spin::Mutex;
 
@@ -17,7 +14,7 @@ use spin::Mutex;
 pub struct ScreenWriter {
     column_position: usize,
     color_code: ColorCode,
-    buffer: &'static mut VGABuffer,
+    pub buffer: &'static mut VGABuffer,
 }
 
 impl ScreenWriter {
