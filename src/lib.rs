@@ -32,6 +32,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 
 /// General function for init kernel.
 pub fn init(){
+    interrupt::gdt::init_gdt();
     interrupt::interrupt::init_idt();
 }
 
@@ -44,6 +45,7 @@ pub fn test_runner(tests: &[&dyn testing::testable::Testable]) {
     for test in tests {
         test.run();
     }
+    serial_println!();
     exit_qemu(QemuExitCode::Success);
 }
 
