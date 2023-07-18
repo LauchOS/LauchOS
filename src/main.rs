@@ -15,6 +15,8 @@ use core::panic::PanicInfo;
 pub extern "C" fn _start() -> ! {
     lauch_os::println!("Hello World");
 
+    lauch_os::init();
+
     // Call tests, if running test env.
     #[cfg(test)]
     test_main();

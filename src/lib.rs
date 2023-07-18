@@ -1,3 +1,6 @@
+// Interrupt
+#![feature(abi_x86_interrupt)]
+
 // Testing
 #![cfg_attr(test, no_main)]
 #![feature(custom_test_frameworks)]
@@ -12,29 +15,10 @@ pub mod general;
 pub mod vga_buffer;
 pub mod qemu;
 pub mod testing;
-
-
-
-/**
- * Test Enviorment
- */
+pub mod interrupt;
 
 use core::panic::PanicInfo;
 
-/// Entry point for `cargo test`
-#[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    test_main();
-    loop {}
-}
-
-/// Panic function for integration tests.
-#[cfg(test)]
-#[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    test_panic_handler(info);
-}
 
 /// Test helper for panic handling.
 pub fn test_panic_handler(info: &PanicInfo) -> ! {
@@ -44,6 +28,11 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
     loop {}
+}
+
+/// General function for init kernel.
+pub fn init(){
+    interrupt::interrupt::init_idt();
 }
 
 /// General function for running tests.
@@ -56,4 +45,25 @@ pub fn test_runner(tests: &[&dyn testing::testable::Testable]) {
         test.run();
     }
     exit_qemu(QemuExitCode::Success);
+}
+
+
+/**
+ * Test Enviorment
+ */
+
+/// Entry point for `cargo test --lib`
+#[cfg(test)]
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    init();
+    test_main();
+    loop {}
+}
+
+/// Panic function for integration tests.
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    test_panic_handler(info);
 }
