@@ -8,6 +8,7 @@ struct Selectors {
     tss_selector: SegmentSelector,
 }
 
+// GDT is used for User-/ Kernel-Switching and loading TSS.
 lazy_static! {
     static ref GDT: (GlobalDescriptorTable, Selectors) = {
         let mut gdt = GlobalDescriptorTable::new();

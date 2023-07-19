@@ -19,6 +19,11 @@ pub mod interrupt;
 
 use core::panic::PanicInfo;
 
+pub fn hlt_loop() -> ! {
+    loop {
+        x86_64::instructions::hlt();
+    }
+}
 
 /// Test helper for panic handling.
 pub fn test_panic_handler(info: &PanicInfo) -> ! {
@@ -27,13 +32,15 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
-    loop {}
+    hlt_loop();  
 }
 
 /// General function for init kernel.
 pub fn init(){
     interrupt::gdt::init_gdt();
     interrupt::interrupt::init_idt();
+    unsafe { interrupt::pics::PICS.lock().initialize() };
+    x86_64::instructions::interrupts::enable();
 }
 
 /// General function for running tests.
@@ -60,7 +67,7 @@ pub fn test_runner(tests: &[&dyn testing::testable::Testable]) {
 pub extern "C" fn _start() -> ! {
     init();
     test_main();
-    loop {}
+    hlt_loop();  
 }
 
 /// Panic function for integration tests.

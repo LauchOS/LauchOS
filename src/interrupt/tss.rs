@@ -3,6 +3,7 @@ use x86_64::structures::tss::TaskStateSegment;
 use lazy_static::lazy_static;
 use super::DOUBLE_FAULT_IST_INDEX;
 
+// Holds information about a task.
 lazy_static! {
     pub static ref TSS: TaskStateSegment = {
         let mut tss = TaskStateSegment::new();

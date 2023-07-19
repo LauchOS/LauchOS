@@ -18,8 +18,11 @@ macro_rules! println {
 #[doc(hidden)]
 pub fn _print(args: Arguments) {
     use core::fmt::Write;
+    use x86_64::instructions::interrupts;
 
-    SCREENWRITER.lock().write_fmt(args).unwrap();
+    interrupts::without_interrupts(|| {
+        SCREENWRITER.lock().write_fmt(args).unwrap();
+    });
 }
 
 
@@ -30,13 +33,13 @@ pub fn _print(args: Arguments) {
  * 
  */
 
-/// Call function `println!` without panicking
+/// Call function `println!` without panicking.
 #[test_case]
 fn test_println_01() {
     println!("test_println_01 output");
 }
 
-/// Call function `println!` many times
+/// Call function `println!` many times.
 #[test_case]
 fn test_println_02() {
     for _ in 0..200 {
@@ -44,26 +47,32 @@ fn test_println_02() {
     }
 }
 
-/// Check output of function `println!`
+/// Check output of function `println!`.
 #[test_case]
 fn test_println_03() {
     use crate::vga_buffer::BUFFER_HEIGHT;
+    use x86_64::instructions::interrupts;
+    use core::fmt::Write;
 
     let s = "test_println_03 output";
-    println!("{}", s);
-    for (i, c) in s.chars().enumerate() {
-        let screen_char = SCREENWRITER.lock().buffer.screen_chars[BUFFER_HEIGHT - 2][i].read();
-        assert_eq!(char::from(screen_char.ascii_character), c);
-    }
+    // Avoid deadlocks
+    interrupts::without_interrupts(|| {
+        let mut writer = SCREENWRITER.lock();
+        writeln!(writer, "\n{}", s).expect("writeln failes");
+        for (i, c) in s.chars().enumerate() {
+            let screen_char = writer.buffer.screen_chars[BUFFER_HEIGHT - 2][i].read();
+            assert_eq!(char::from(screen_char.ascii_character), c);
+        }
+    });
 }
 
-/// Call function `print!` without panicking 
+/// Call function `print!` without panicking.
 #[test_case]
 fn test_print_01() {
     print!("test_print_01 output");
 }
 
-/// Call function `print!` many times
+/// Call function `print!` many times.
 #[test_case]
 fn test_print_02() {
     for _ in 0..200 {

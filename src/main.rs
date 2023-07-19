@@ -13,15 +13,13 @@ use core::panic::PanicInfo;
 /// Entry point for `cargo run`
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    lauch_os::println!("Hello World");
-
     lauch_os::init();
 
     // Call tests, if running test env.
     #[cfg(test)]
     test_main();
 
-    loop {}
+    lauch_os::hlt_loop();
 }
 
 /// Panic function for error handling.
@@ -29,7 +27,7 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     lauch_os::println!("{}", info);
-    loop {}
+    lauch_os::hlt_loop();
 }
 
 /// Panic function for tests.
