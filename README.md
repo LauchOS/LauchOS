@@ -11,6 +11,7 @@ Rust Documentation: https://doc.rust-lang.org/book/
 1) Install rust-src  `rustup component add rust-src`
 2) Install Bootimage  `cargo install bootimage`
 3) Install llvm-tools  `rustup component add llvm-tools-preview`
+4) Install qemu
 
 # Start Program (Qemu required):
 1) Build  `cargo build`
