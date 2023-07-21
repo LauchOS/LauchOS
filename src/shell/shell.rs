@@ -1,20 +1,19 @@
 use crate::{print, println};
 use crate::shell::command::Command;
+use crate::shell::command_list;
+use crate::shell::command_list::COMMANDS;
 use crate::shell::string;
 use crate::testing::testable::Testable;
 
 pub const BUFFER_LENGTH: usize = 20; // static length for now
 static mut BUFFER: [char; BUFFER_LENGTH] = ['\0'; BUFFER_LENGTH]; // static buffer length until allocs are possible
 static mut POINTER: usize = 0;
-static mut COMMANDS: [Option<Command>; 1] = [None];
 
 pub fn init_shell(){
-    unsafe {
-        let execute = echo;
-        COMMANDS[0] = Some(Command::new(string::to_char_array("echo"), execute));
-    }
+    command_list::init_commands();
 }
 
+// Processes Unicode type data, executes commands on enter
 pub fn input_key(char: char){
     print!("{}", char);
     if char == '\n'{
@@ -54,7 +53,6 @@ unsafe fn fire_command(){
                     if BUFFER[j] == '\0' {
                         break;
                     }
-                    // println!("element {}: {} at {}-{}", j, BUFFER[j], pos_in_arg, arg_count);
 
                     args[arg_count][pos_in_arg] = BUFFER[j];
                     pos_in_arg += 1;
@@ -77,15 +75,7 @@ unsafe fn fire_command(){
 
 }
 
-fn echo(args: &[[char; BUFFER_LENGTH]; 10]){
-    for i in 0..args[0].len() {
-        if args[0][i] == '\0'{
-            break;
-        }
-        print!("{}", args[0][i]);
-    }
-    print!("\n");
-}
+
 
 
 
