@@ -11,6 +11,7 @@ static mut POINTER: usize = 0;
 
 pub fn init_shell(){
     command_list::init_commands();
+    print!("$ ");
 }
 
 // Processes Unicode type data, executes commands on enter
@@ -72,6 +73,7 @@ unsafe fn fire_command(){
         BUFFER[i] = '\0';
     }
     POINTER = 0;
+    print!("$ ");
 
 }
 
