@@ -16,6 +16,7 @@ pub mod vga_buffer;
 pub mod qemu;
 pub mod testing;
 pub mod interrupt;
+mod shell;
 
 use core::panic::PanicInfo;
 

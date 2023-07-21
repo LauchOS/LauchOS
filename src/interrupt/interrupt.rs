@@ -1,6 +1,7 @@
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 use crate::{println, print};
 use lazy_static::lazy_static;
+use crate::shell::shell;
 use super::DOUBLE_FAULT_IST_INDEX;
 use super::pics::{InterruptIndex, PICS};
 
@@ -19,12 +20,15 @@ lazy_static! {
         }
         idt
     };
+
 }
 
 /// Init IDT.
 pub fn init_idt() {
     IDT.load();
+    shell::init_shell();
 }
+
 
 /**
  * Handler functions
@@ -77,10 +81,17 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(
     if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
         if let Some(key) = keyboard.process_keyevent(key_event) {
             match key {
-                DecodedKey::Unicode(character) => print!("{}", character),
-                DecodedKey::RawKey(key) => print!("{:?}", key),
+                DecodedKey::Unicode(character) => {
+                    shell::input_key(character);
+                }
+                DecodedKey::RawKey(key) => {
+                    print!("{:?}", key);
+                }
             }
+
         }
+
+
     }
 
     unsafe {
