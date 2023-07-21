@@ -1,8 +1,8 @@
 use crate::shell::shell::BUFFER_LENGTH;
 
-pub fn to_char_array(s: &str) -> [char; BUFFER_LENGTH] {
+pub fn to_char_array(str: &str) -> [char; BUFFER_LENGTH] {
     let mut arr = ['\0'; BUFFER_LENGTH];  // Initialize array with null characters
-    for (i, c) in s.chars().enumerate() {
+    for (i, c) in str.chars().enumerate() {
         arr[i] = c;
     }
     arr
