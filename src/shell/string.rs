@@ -24,7 +24,7 @@ pub fn is_equal_to(s: &str, chars: &[char]) -> bool {
 // compares both char arrays until the first one is empty
 pub fn are_chars_equal(chars1: &[char], chars2: &[char]) -> bool{
     for i in 0.. chars1.len(){
-        if chars1[i] == '\0'{
+        if chars1[i] == '\0' && (chars2[i] == ' ' || chars2[i] == '\0'){
             break;
         }
         if chars1[i] != chars2[i]{
