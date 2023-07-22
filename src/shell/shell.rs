@@ -1,11 +1,7 @@
 use crate::{print, println};
-use crate::general::color::Color;
-use crate::shell::command::Command;
 use crate::shell::command_list;
 use crate::shell::command_list::COMMANDS;
 use crate::shell::string;
-use crate::testing::testable::Testable;
-use crate::vga_buffer::screen_char::ColorCode;
 
 pub const BUFFER_LENGTH: usize = 20; // static length for now
 static mut BUFFER: [char; BUFFER_LENGTH] = ['\0'; BUFFER_LENGTH]; // static buffer length until allocs are possible
