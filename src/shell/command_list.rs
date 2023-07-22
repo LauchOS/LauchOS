@@ -35,7 +35,7 @@ fn echo(args: &[[char; BUFFER_LENGTH]; 10]){
 }
 
 fn exit(_args: &[[char; BUFFER_LENGTH]; 10]){
-    // TODO exit application / shell
+    // @TODO exit application / shell
     println!("No way outta here...");
 }
 
