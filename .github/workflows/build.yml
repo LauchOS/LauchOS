@@ -15,8 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up QEMU & Rust
-        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 && rustup component add rust-src && rustup component add llvm-tools-preview
+      #- name: Set up QEMU & Rust
+      #  run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
+
+      - name: Add rust-src and tools
+        run: rustup component add rust-src # && rustup component add llvm-tools-preview
 
       - name: Build Bootimage
         run: cargo install bootimage && cargo bootimage --target x86_64-unknown-none
@@ -30,7 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: softprops/action-gh-release@v1
         with:
-          files: ./target/x86_64-lauch-os/debug/bootimage-lauch_os.bin
+          files: ./target/x86_64-unknown-none/debug/bootimage-lauch_os.bin
           tag_name: ${{ github.ref }}
           name: Release ${{ github.ref }}
           body: Bootable image release for ${{ github.ref }}
