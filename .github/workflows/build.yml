@@ -2,7 +2,7 @@ name: Build Bootimage
 on:
   push:
     branches:
-      - main
+      - actions-test
     tags:
       - '*'
 
