@@ -19,7 +19,7 @@ jobs:
       #  run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
       - name: Add rust-src and tools
-        run: rustup component add rust-src # && rustup component add llvm-tools-preview
+        run: rustup component add rust-src && rustup component add llvm-tools-preview
 
       - name: Build Bootimage
         run: cargo install bootimage && cargo bootimage --target x86_64-unknown-none
