@@ -1,15 +1,17 @@
 use crate::{print, println};
+use crate::io::interactions;
 use crate::shell::command::{Command, ExecuteFn};
 use crate::shell::shell::BUFFER_LENGTH;
 use crate::shell::string;
 
-pub static mut COMMANDS: [Option<Command>; 2] = [None; 2]; // length currently static @TODO once alloc possible
+pub static mut COMMANDS: [Option<Command>; 3] = [None; 3]; // length currently static @TODO once alloc possible
 
 // register all base commands
 pub fn init_commands(){
     let commands: &[(&str, ExecuteFn)] = &[
         ("echo", echo),
         ("exit", exit),
+        ("clear", clear)
     ];
 
     unsafe {
@@ -37,6 +39,10 @@ fn echo(args: &[[char; BUFFER_LENGTH]; 10]){
 fn exit(_args: &[[char; BUFFER_LENGTH]; 10]){
     // @TODO exit application / shell
     println!("No way outta here...");
+}
+
+fn clear(_args: &[[char; BUFFER_LENGTH]; 10]){
+    interactions::clear();
 }
 
 

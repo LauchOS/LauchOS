@@ -1,4 +1,5 @@
 use crate::{print, println};
+use crate::io::interactions;
 use crate::shell::command_list;
 use crate::shell::command_list::COMMANDS;
 use crate::shell::string;
@@ -90,7 +91,7 @@ unsafe fn backspace_pressed(){
     if POINTER == 0 {return;}
     POINTER -= 1;
     BUFFER[POINTER] = '\0';
-    // @TODO remove character from screen
+    interactions::remove_last_character_from_lowest_line();
 }
 
 // autocomplete command if possible

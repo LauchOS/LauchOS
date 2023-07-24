@@ -58,13 +58,28 @@ impl ScreenWriter {
     }
 
     /// Clears a whole row.
-    fn clear_row(&mut self, row: usize) {
+    pub fn clear_row(&mut self, row: usize) {
         let blank = ScreenChar {
             ascii_character: b' ',
             color_code: self.color_code,
         };
         for col in 0..BUFFER_WIDTH {
             self.buffer.screen_chars[row][col].write(blank);
+        }
+    }
+
+    /// Removes the last character in the lowest row of the buffer. <br/>
+    /// Adjusts the `column_position` to the removed position. </br>
+    /// No line overflow if lowest line is empty.
+    pub fn remove_last_char_from_lowest_line(&mut self) {
+        let last_row = BUFFER_HEIGHT - 1;
+        if self.column_position > 0 {
+            self.column_position -= 1;
+            let blank = ScreenChar {
+                ascii_character: b' ',
+                color_code: self.color_code,
+            };
+            self.buffer.screen_chars[last_row][self.column_position].write(blank);
         }
     }
 }
