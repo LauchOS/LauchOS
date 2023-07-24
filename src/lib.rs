@@ -16,6 +16,8 @@ pub mod vga_buffer;
 pub mod qemu;
 pub mod testing;
 pub mod interrupt;
+
+// Programs
 mod shell;
 
 use core::panic::PanicInfo;
@@ -42,6 +44,9 @@ pub fn init(){
     interrupt::interrupt::init_idt();
     unsafe { interrupt::pics::PICS.lock().initialize() };
     x86_64::instructions::interrupts::enable();
+
+    // Start shell (program)
+    shell::shell::init_shell();
 }
 
 /// General function for running tests.
