@@ -6,7 +6,7 @@ use crate::shell::string;
 
 pub static mut COMMANDS: [Option<Command>; 3] = [None; 3]; // length currently static @TODO once alloc possible
 
-// register all base commands
+/// Registers all base commands for the shell.
 pub fn init_commands(){
     let commands: &[(&str, ExecuteFn)] = &[
         ("echo", echo),

@@ -4,21 +4,23 @@ use crate::shell::command_list;
 use crate::shell::command_list::COMMANDS;
 use crate::shell::string;
 
+/// Currently static length of the shell buffer.
 pub const BUFFER_LENGTH: usize = 20; // static length for now
 static mut BUFFER: [char; BUFFER_LENGTH] = ['\0'; BUFFER_LENGTH]; // static buffer length until allocs are possible
 static mut POINTER: usize = 0;
 
+/// Sets commands up, starts shell
 pub fn init_shell(){
     command_list::init_commands();
     print!("$ ");
 }
 
-// Processes Unicode type data, executes commands on enter
+/// Processes Unicode type data from keyboard input. <br>
+/// Executes commands on enter. <br>
+/// Handles control actions.
 pub fn input_key(char: char){
-
     if !char.is_control() {
         print!("{}", char);
-
         unsafe {
             BUFFER[POINTER] = char;
             POINTER += 1;
@@ -32,7 +34,7 @@ pub fn input_key(char: char){
 
     // handle control characters
     match char {
-        '\n' => unsafe{ fire_command()}
+        '\n' => unsafe{ execute()}
         '\u{0008}' => unsafe{ backspace_pressed()}
         '\t' => unsafe{ tab_pressed()}
         _ => {}
@@ -41,12 +43,13 @@ pub fn input_key(char: char){
 
 }
 
-unsafe fn fire_command(){
+/// Finds correct `COMMAND` instance and executes its `executableFn`.
+unsafe fn execute(){
     print!("\n");
     let mut success = false;
     for i in 0..COMMANDS.len() {
         if let Some(cmd) = &COMMANDS[i]{
-            if string::are_chars_equal(&cmd.command, &BUFFER){
+            if string::are_chars_first_word_equal(&cmd.command, &BUFFER){
                 success = true;
                 let mut arg_count = 0;
                 let mut pos_in_arg = 0;
@@ -87,6 +90,7 @@ unsafe fn fire_command(){
     print!("$ ");
 }
 
+/// Removes last written character from shell `BUFFER` and `vga_buffer`.
 unsafe fn backspace_pressed(){
     if POINTER == 0 {return;}
     POINTER -= 1;
@@ -94,7 +98,7 @@ unsafe fn backspace_pressed(){
     interactions::remove_last_character_from_lowest_line();
 }
 
-// autocomplete command if possible
+/// Finds possible `COMMAND`instances and completes the command in shell `BUFFER` and `vga_buffer` if possible.
 unsafe fn tab_pressed(){
     let mut char_freq_count = [0; BUFFER_LENGTH];
     let mut complete_char = ['\0'; BUFFER_LENGTH];
