@@ -15,8 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      #- name: Set up QEMU & Rust
-      #  run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
+      - name: Set up QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
       - name: Add rust-src and tools
         run: rustup component add rust-src && rustup component add llvm-tools-preview
