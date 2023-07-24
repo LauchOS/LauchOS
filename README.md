@@ -4,7 +4,7 @@ GPOS developed in Rust
 Guideline: https://os.phil-opp.com https://os.phil-opp.com/edition-1/
 sdf
 VM: https://www.qemu.org/
-
+asd
 Rust Documentation: https://doc.rust-lang.org/book/
 
 # First time on dev device
