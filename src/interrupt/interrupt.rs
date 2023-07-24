@@ -26,7 +26,6 @@ lazy_static! {
 /// Init IDT.
 pub fn init_idt() {
     IDT.load();
-    shell::init_shell();
 }
 
 
@@ -81,6 +80,7 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(
     if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
         if let Some(key) = keyboard.process_keyevent(key_event) {
             match key {
+                // Will be changed in the future (shell is a program).
                 DecodedKey::Unicode(character) => {
                     shell::input_key(character);
                 }
