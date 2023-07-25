@@ -4,7 +4,10 @@ on:
     branches:
       - actions-test
     tags:
-      - '*'
+      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
