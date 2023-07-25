@@ -4,7 +4,7 @@ on:
     branches:
       - actions-test
     tags:
-      - 'v*'
+      - "v*.*.*"
 
 permissions:
   contents: write
@@ -37,6 +37,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ./target/x86_64-unknown-none/debug/bootimage-lauch_os.bin
-          tag_name: ${{ github.ref }}
           name: Release ${{ github.ref }}
           body: Bootable image release for ${{ github.ref }}
