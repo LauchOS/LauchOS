@@ -4,7 +4,7 @@ on:
     branches:
       - actions-test
     tags:
-      - "v*.*.*"
+      - 'v*.*.*'
 
 permissions:
   contents: write
@@ -17,6 +17,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        
+      - name: Get Env
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
@@ -37,6 +41,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ./target/x86_64-unknown-none/debug/bootimage-lauch_os.bin
-          tag_name: Release
-          name: Release ${{ github.ref }}
-          body: Bootable image release for ${{ github.ref }}
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: Release ${{ steps.vars.outputs.tag }}
+          body: Bootable image release for ${{ steps.vars.outputs.tag }}
