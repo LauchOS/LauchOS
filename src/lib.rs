@@ -16,6 +16,8 @@ use bootloader::{entry_point, BootInfo};
 #[cfg(test)]
 entry_point!(test_kernel_main);
 
+extern crate alloc;
+
 pub mod io;
 pub mod general;
 pub mod vga_buffer;
@@ -51,7 +53,7 @@ pub fn init(){
     interrupt::interrupt::init_idt();
     unsafe { interrupt::pics::PICS.lock().initialize() };
     x86_64::instructions::interrupts::enable();
-
+    
     // Start shell (program)
     // shell::shell::init_shell();
 }

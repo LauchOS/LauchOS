@@ -1,5 +1,7 @@
 use bootloader::bootinfo::{MemoryMap, MemoryRegionType};
-use x86_64::{structures::paging::{PhysFrame, FrameAllocator, Size4KiB}, PhysAddr};
+use x86_64::{structures::paging::{PhysFrame, Page, FrameAllocator, Size4KiB, mapper::MapToError, Mapper, PageTableFlags}, PhysAddr, VirtAddr};
+use super::{HEAP_SIZE, HEAP_START};
+use linked_list_allocator::LockedHeap;
 
 /// A FrameAllocator that returns usable frames from the bootloader's memory map.
 pub struct BootInfoFrameAllocator {
@@ -34,4 +36,38 @@ unsafe impl FrameAllocator<Size4KiB> for BootInfoFrameAllocator {
         self.next += 1;
         frame
     }
+}
+
+#[global_allocator]
+static ALLOCATOR: LockedHeap = LockedHeap::empty();
+
+/// Init kernel heap.
+pub fn init_heap(
+    mapper: &mut impl Mapper<Size4KiB>,
+    frame_allocator: &mut impl FrameAllocator<Size4KiB>,
+) -> Result<(), MapToError<Size4KiB>> {
+    // Map all kernel heap pages to physical frames
+    let page_range = {
+        let heap_start = VirtAddr::new(HEAP_START as u64);
+        let heap_end = heap_start + HEAP_SIZE - 1u64;
+        let heap_start_page = Page::containing_address(heap_start);
+        let heap_end_page = Page::containing_address(heap_end);
+        Page::range_inclusive(heap_start_page, heap_end_page)
+    };
+
+    for page in page_range {
+        let frame = frame_allocator
+            .allocate_frame()
+            .ok_or(MapToError::FrameAllocationFailed)?;
+        let flags = PageTableFlags::PRESENT | PageTableFlags::WRITABLE;
+        unsafe {
+            mapper.map_to(page, frame, flags, frame_allocator)?.flush()
+        };
+    }
+
+    unsafe {
+        ALLOCATOR.lock().init(HEAP_START, HEAP_SIZE);
+    }
+
+    Ok(())
 }
