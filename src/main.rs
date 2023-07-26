@@ -9,10 +9,12 @@
 #![no_main]
 
 use core::panic::PanicInfo;
+use bootloader::{BootInfo, entry_point};
+
+entry_point!(kernel_main);
 
 /// Entry point for `cargo run`
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+fn kernel_main(_boot_info: &'static BootInfo) -> ! {
     lauch_os::init();
 
     // Call tests, if running test env.

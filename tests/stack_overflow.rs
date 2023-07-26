@@ -4,9 +4,11 @@
 
 use core::panic::PanicInfo;
 use lauch_os::serial_print;
+use bootloader::{BootInfo, entry_point};
 
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+entry_point!(kernel_main);
+
+fn kernel_main(boot_info: &'static BootInfo) -> ! {
     serial_print!("stack_overflow::stack_overflow...\t");
 
     lauch_os::interrupt::gdt::init_gdt();
