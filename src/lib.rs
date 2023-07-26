@@ -1,3 +1,6 @@
+// Allocator
+#![feature(const_mut_refs)]
+
 // Interrupt
 #![feature(abi_x86_interrupt)]
 

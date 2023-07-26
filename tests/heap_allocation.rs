@@ -13,7 +13,7 @@ entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
     use lauch_os::memory::allocator;
-    use lauch_os::memory::allocator::{BootInfoFrameAllocator};
+    use lauch_os::memory::allocator::frame_allocator::BootInfoFrameAllocator;
     use x86_64::VirtAddr;
     use lauch_os::memory::offset_page_table::init_opt;
 
