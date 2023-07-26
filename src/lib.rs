@@ -1,3 +1,6 @@
+// Allocator
+#![feature(const_mut_refs)]
+
 // Interrupt
 #![feature(abi_x86_interrupt)]
 
@@ -10,12 +13,21 @@
 // No std library
 #![no_std]
 
+#[cfg(test)]
+use bootloader::{entry_point, BootInfo};
+
+#[cfg(test)]
+entry_point!(test_kernel_main);
+
+extern crate alloc;
+
 pub mod io;
 pub mod general;
 pub mod vga_buffer;
 pub mod qemu;
 pub mod testing;
 pub mod interrupt;
+pub mod memory;
 
 // Programs
 mod shell;
@@ -44,9 +56,9 @@ pub fn init(){
     interrupt::interrupt::init_idt();
     unsafe { interrupt::pics::PICS.lock().initialize() };
     x86_64::instructions::interrupts::enable();
-
+    
     // Start shell (program)
-    shell::shell::init_shell();
+    // shell::shell::init_shell();
 }
 
 /// General function for running tests.
@@ -69,8 +81,7 @@ pub fn test_runner(tests: &[&dyn testing::testable::Testable]) {
 
 /// Entry point for `cargo test --lib`
 #[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
     init();
     test_main();
     hlt_loop();  
