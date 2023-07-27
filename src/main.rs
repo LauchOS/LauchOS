@@ -8,36 +8,26 @@
 #![no_std]
 #![no_main]
 
+extern crate alloc;
+
 use core::panic::PanicInfo;
 use bootloader::{BootInfo, entry_point};
-
-extern crate alloc;
-use alloc::boxed::Box;
-use lauch_os::println;
+use lauch_os::multitasking::{executor::Executor, tasks::{Task, keyboard::print_keypresses}};
 
 entry_point!(kernel_main);
 
 /// Entry point for `cargo run`
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
-    use lauch_os::memory::allocator;
-    use lauch_os::memory::allocator::frame_allocator::BootInfoFrameAllocator;
-    use lauch_os::memory::offset_page_table::init_opt;
-    use x86_64::VirtAddr;
-
     lauch_os::init();
 
-    // Frame Allocator
-    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
-    let mut mapper = unsafe { init_opt(phys_mem_offset) };
-    let mut frame_allocator = unsafe {
-        BootInfoFrameAllocator::init(&boot_info.memory_map)
-    };
+    // Allocator
+    init_allocator(boot_info);
 
-    // Basic Allocator
-    allocator::init_heap(&mut mapper, &mut frame_allocator)
-        .expect("heap initialization failed");
-    let heap_value = Box::new(41);
-    println!("heap_value at {:p}", heap_value);
+    // Run two tasks
+    let mut executor = Executor::new();
+    executor.spawn(Task::new(example_task()));
+    executor.spawn(Task::new(print_keypresses()));
+    executor.run();
 
     // Call tests, if running test env.
     #[cfg(test)]
@@ -59,4 +49,34 @@ fn panic(info: &PanicInfo) -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     lauch_os::test_panic_handler(info)
+}
+
+/// Init frame and basic allocator
+fn init_allocator(boot_info: &'static BootInfo){
+    use lauch_os::memory::allocator;
+    use lauch_os::memory::allocator::frame_allocator::BootInfoFrameAllocator;
+    use lauch_os::memory::offset_page_table::init_opt;
+    use x86_64::VirtAddr;
+
+    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+    let mut mapper = unsafe { init_opt(phys_mem_offset) };
+    let mut frame_allocator = unsafe {
+        BootInfoFrameAllocator::init(&boot_info.memory_map)
+    };
+
+    // Basic Allocator
+    allocator::init_heap(&mut mapper, &mut frame_allocator)
+        .expect("heap initialization failed");
+}
+
+/// Async function for example task
+async fn async_number() -> u32 {
+    42
+}
+
+/// Example Task
+async fn example_task() {
+    use lauch_os::println;
+    let number = async_number().await;
+    println!("async number: {}", number);
 }

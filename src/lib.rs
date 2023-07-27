@@ -28,6 +28,7 @@ pub mod qemu;
 pub mod testing;
 pub mod interrupt;
 pub mod memory;
+pub mod multitasking;
 
 // Programs
 mod shell;
