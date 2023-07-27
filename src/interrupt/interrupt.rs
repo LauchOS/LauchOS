@@ -1,7 +1,6 @@
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame, PageFaultErrorCode};
-use crate::{println, print};
+use crate::println;
 use lazy_static::lazy_static;
-use crate::shell::shell;
 use super::DOUBLE_FAULT_IST_INDEX;
 use super::pics::{InterruptIndex, PICS};
 
@@ -63,37 +62,10 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(
     _stack_frame: InterruptStackFrame)
 {
     use x86_64::instructions::port::Port;
-    use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
-    use spin::Mutex;
 
-    lazy_static! {
-        static ref KEYBOARD: Mutex<Keyboard<layouts::Us104Key, ScancodeSet1>> =
-            Mutex::new(Keyboard::new(layouts::Us104Key, ScancodeSet1,
-                HandleControl::Ignore)
-            );
-    }
-
-    let mut keyboard = KEYBOARD.lock();
     let mut port = Port::new(0x60);
-
-    // Get scancode from specific port
     let scancode: u8 = unsafe { port.read() };
-    if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
-        if let Some(key) = keyboard.process_keyevent(key_event) {
-            match key {
-                // Will be changed in the future (shell is a program).
-                DecodedKey::Unicode(character) => {
-                    shell::input_key(character);
-                }
-                DecodedKey::RawKey(key) => {
-                    print!("{:?}", key);
-                }
-            }
-
-        }
-
-
-    }
+    crate::multitasking::tasks::keyboard::add_scancode(scancode);
 
     unsafe {
         PICS.lock()
