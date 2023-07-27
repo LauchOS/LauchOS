@@ -7,6 +7,10 @@ VM: https://www.qemu.org/
 
 Rust Documentation: https://doc.rust-lang.org/book/
 
+# Requirements:
+- Rust [Get Rust](https://www.rust-lang.org/learn/get-started)
+- Qemu [Get Qemu](https://www.qemu.org/)
+
 # First time on dev device
 1) Install rust-src  `rustup component add rust-src`
 2) Install Bootimage  `cargo install bootimage`
