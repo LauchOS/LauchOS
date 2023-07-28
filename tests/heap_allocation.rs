@@ -17,7 +17,7 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     use x86_64::VirtAddr;
     use lauch_os::memory::offset_page_table::init_opt;
 
-    lauch_os::init();
+    lauch_os::init(boot_info);
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
     let mut mapper = unsafe { init_opt(phys_mem_offset) };
     let mut frame_allocator = unsafe {

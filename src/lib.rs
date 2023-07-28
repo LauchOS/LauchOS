@@ -14,7 +14,9 @@
 #![no_std]
 
 #[cfg(test)]
-use bootloader::{entry_point, BootInfo};
+use bootloader::entry_point;
+
+use bootloader::BootInfo;
 
 #[cfg(test)]
 entry_point!(test_kernel_main);
@@ -52,11 +54,12 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 }
 
 /// General function for init kernel.
-pub fn init(){
+pub fn init(boot_info: &'static BootInfo){
     interrupt::gdt::init_gdt();
     interrupt::interrupt::init_idt();
     unsafe { interrupt::pics::PICS.lock().initialize() };
     x86_64::instructions::interrupts::enable();
+    memory::allocator::init_allocators(boot_info);
     
     // Start shell (program)
     // shell::shell::init_shell();
@@ -82,8 +85,8 @@ pub fn test_runner(tests: &[&dyn testing::testable::Testable]) {
 
 /// Entry point for `cargo test --lib`
 #[cfg(test)]
-fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
-    init();
+fn test_kernel_main(boot_info: &'static BootInfo) -> ! {
+    init(boot_info);
     test_main();
     hlt_loop();  
 }

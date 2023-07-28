@@ -5,6 +5,7 @@ pub mod frame_allocator;
 pub mod bump_allocator;
 pub mod linked_list_allocator;
 pub mod fixed_size_block_allocator;
+use bootloader::BootInfo;
 
 /**
  * Allocator Types
@@ -77,4 +78,20 @@ impl<A> Locked<A> {
 
 fn align_up(addr: usize, align: usize) -> usize {
     (addr + align - 1) & !(align - 1)
+}
+
+/// Init frame and basic allocator
+pub fn init_allocators(boot_info: &'static BootInfo){
+    use super::offset_page_table::init_opt;
+    use frame_allocator::BootInfoFrameAllocator;
+
+    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+    let mut mapper = unsafe { init_opt(phys_mem_offset) };
+    let mut frame_allocator = unsafe {
+        BootInfoFrameAllocator::init(&boot_info.memory_map)
+    };
+
+    // Basic Allocator
+    init_heap(&mut mapper, &mut frame_allocator)
+        .expect("heap initialization failed");
 }
