@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(lauch_os::testing::test_runner)]
+#![test_runner(lauch_os::general::testing::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 extern crate alloc;
@@ -16,7 +16,7 @@ fn kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
 
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
-    lauch_os::testing::test_panic_handler(info)
+    lauch_os::general::testing::test_panic_handler(info)
 }
 
 #[test_case]

@@ -1,18 +1,13 @@
-use crate::{print, println};
 use crate::io::interactions;
-use crate::shell::command_list;
-use crate::shell::command_list::COMMANDS;
-use crate::shell::string;
-
-/// Currently static length of the shell buffer.
-pub const BUFFER_LENGTH: usize = 20; // static length for now
-static mut BUFFER: [char; BUFFER_LENGTH] = ['\0'; BUFFER_LENGTH]; // static buffer length until allocs are possible
-static mut POINTER: usize = 0;
+use super::command_list;
+use super::command_list::COMMANDS;
+use super::string;
+use super::{BUFFER, BUFFER_LENGTH, POINTER};
 
 /// Sets commands up, starts shell
 pub fn init_shell(){
     command_list::init_commands();
-    print!("$ ");
+    crate::print!("$ ");
 }
 
 /// Processes Unicode type data from keyboard input. <br>
@@ -20,7 +15,7 @@ pub fn init_shell(){
 /// Handles control actions.
 pub fn input_key(char: char){
     if !char.is_control() {
-        print!("{}", char);
+        crate::print!("{}", char);
         unsafe {
             BUFFER[POINTER] = char;
             POINTER += 1;
@@ -45,7 +40,7 @@ pub fn input_key(char: char){
 
 /// Finds correct `COMMAND` instance and executes its `executableFn`.
 unsafe fn execute(){
-    print!("\n");
+    crate::print!("\n");
     let mut success = false;
     for i in 0..COMMANDS.len() {
         if let Some(cmd) = &COMMANDS[i]{
@@ -76,18 +71,18 @@ unsafe fn execute(){
     }
 
     if !success {
-        print!("Command '");
+        crate::print!("Command '");
         for i in 0..POINTER {
-            print!("{}", BUFFER[i]);
+            crate::print!("{}", BUFFER[i]);
         }
-        println!("' not found.")
+        crate::println!("' not found.")
     }
 
     for i in 0..BUFFER_LENGTH {
         BUFFER[i] = '\0';
     }
     POINTER = 0;
-    print!("$ ");
+    crate::print!("$ ");
 }
 
 /// Removes last written character from shell `BUFFER` and `vga_buffer`.
@@ -126,7 +121,7 @@ unsafe fn tab_pressed(){
     for i in 0..complete_char.len() {
         if complete_char[i] == '\0' {break}
         if i < POINTER {continue}
-        print!("{}", complete_char[i]);
+        crate::print!("{}", complete_char[i]);
         BUFFER[POINTER] = complete_char[i];
         POINTER += 1;
     }

@@ -1,5 +1,6 @@
-use core::fmt::Arguments;
+use core::fmt::{Write, Arguments};
 use super::screen_writer::SCREENWRITER;
+use x86_64::instructions::interrupts;
 
 /// Print macro for printing on the screen.
 #[macro_export]
@@ -17,9 +18,6 @@ macro_rules! println {
 /// Basic print function (no macro) for printing a string on the screen.
 #[doc(hidden)]
 pub fn _print(args: Arguments) {
-    use core::fmt::Write;
-    use x86_64::instructions::interrupts;
-
     interrupts::without_interrupts(|| {
         SCREENWRITER.lock().write_fmt(args).unwrap();
     });
@@ -50,9 +48,7 @@ fn test_println_02() {
 /// Check output of function `println!`.
 #[test_case]
 fn test_println_03() {
-    use crate::vga_buffer::BUFFER_HEIGHT;
-    use x86_64::instructions::interrupts;
-    use core::fmt::Write;
+    use super::vga_buffer::BUFFER_HEIGHT;
 
     let s = "test_println_03 output";
     // Avoid deadlocks

@@ -17,7 +17,7 @@ fn kernel_main(_boot_info: &'static bootloader::BootInfo) -> ! {
 
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
-    lauch_os::testing::test_panic_handler(info)
+    lauch_os::general::testing::test_panic_handler(info)
 }
 
 /// Causing stack overflow
@@ -54,7 +54,9 @@ extern "x86-interrupt" fn test_double_fault_handler(
     _stack_frame: InterruptStackFrame,
     _error_code: u64,
 ) -> ! {
+    use lauch_os::general::qemu::exit;
+
     lauch_os::serial_println!("[ok]");
-    lauch_os::qemu::exit::exit_qemu(lauch_os::qemu::exit::QemuExitCode::Success);
+    exit::exit_qemu(exit::QemuExitCode::Success);
     loop {}
 }

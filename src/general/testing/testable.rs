@@ -9,11 +9,8 @@ where
     T: Fn(),
 {
     fn run(&self) {
-        use crate::serial_print;
-        use crate::serial_println;
-        
-        serial_print!("{}...\t", core::any::type_name::<T>());
+        crate::serial_print!("{}...\t", core::any::type_name::<T>());
         self();
-        serial_println!("[ok]");
+        crate::serial_println!("[ok]");
     }
 }

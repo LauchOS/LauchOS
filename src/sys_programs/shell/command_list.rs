@@ -1,8 +1,8 @@
 use crate::{print, println};
 use crate::io::interactions;
-use crate::shell::command::{Command, ExecuteFn};
-use crate::shell::shell::BUFFER_LENGTH;
-use crate::shell::string;
+use super::command::{Command, ExecuteFn};
+use super::BUFFER_LENGTH;
+use super::string;
 
 pub static mut COMMANDS: [Option<Command>; 3] = [None; 3]; // length currently static @TODO once alloc possible
 

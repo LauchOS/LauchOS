@@ -1,4 +1,4 @@
-use crate::shell::shell::BUFFER_LENGTH;
+use super::BUFFER_LENGTH;
 
 /// Struct for any shell command. <br>
 /// pub command: [char; BUFFER_LENGTH] <br>

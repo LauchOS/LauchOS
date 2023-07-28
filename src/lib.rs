@@ -7,7 +7,7 @@
 // Testing
 #![cfg_attr(test, no_main)]
 #![feature(custom_test_frameworks)]
-#![test_runner(crate::testing::test_runner)]
+#![test_runner(crate::general::testing::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 // No std library
@@ -19,15 +19,10 @@ bootloader::entry_point!(test_kernel_main);
 
 pub mod io;
 pub mod general;
-pub mod vga_buffer;
-pub mod qemu;
-pub mod testing;
 pub mod interrupt;
 pub mod memory;
 pub mod multitasking;
-
-// Will be changed by time
-pub mod shell;
+pub mod sys_programs;
 
 extern crate alloc;
 
@@ -69,5 +64,5 @@ fn test_kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
-    testing::test_panic_handler(info);
+    general::testing::test_panic_handler(info);
 }

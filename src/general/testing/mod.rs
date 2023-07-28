@@ -1,5 +1,7 @@
 pub mod testable;
 
+use crate::general::qemu::exit;
+
 /// General function for running tests. <br>
 /// Will be called by test_main()
 pub fn test_runner(tests: &[&dyn testable::Testable]) {
@@ -9,13 +11,13 @@ pub fn test_runner(tests: &[&dyn testable::Testable]) {
         test.run();
     }
     crate::serial_println!();
-    crate::qemu::exit::exit_qemu(crate::qemu::exit::QemuExitCode::Success);
+    exit::exit_qemu(exit::QemuExitCode::Success);
 }
 
 /// Test helper for panic handling.
 pub fn test_panic_handler(info: &core::panic::PanicInfo) -> ! {
     crate::serial_println!("[failed]\n");
     crate::serial_println!("Error: {}\n", info);
-    crate::qemu::exit::exit_qemu(crate::qemu::exit::QemuExitCode::Failed);
+    exit::exit_qemu(exit::QemuExitCode::Failed);
     crate::hlt_loop();
 }

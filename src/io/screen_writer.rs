@@ -1,11 +1,8 @@
-use crate::vga_buffer::screen_char::*;
+use super::vga_buffer::vga_buffer::VGABuffer;
+use super::vga_buffer::screen_char::{ColorCode, ScreenChar};
+use super::vga_buffer::{BUFFER_HEIGHT, BUFFER_WIDTH};
 use crate::general::color::Color;
-use crate::vga_buffer::vga_buffer::VGABuffer;
-use crate::vga_buffer::*;
-
-use core::fmt::*;
-use lazy_static::lazy_static;
-use spin::Mutex;
+use core::fmt::{Write, Result};
 
 /// The screen writer, that changes the VGA-Buffer. <br>
 /// `column_position: usize`, <br>
@@ -92,9 +89,9 @@ impl Write for ScreenWriter {
     }
 }
 
-lazy_static! {
+lazy_static::lazy_static! {
     /// Creates an static global writer instance, that is saved by mutex implementation.
-    pub static ref SCREENWRITER: Mutex<ScreenWriter> = Mutex::new(ScreenWriter {
+    pub static ref SCREENWRITER: spin::Mutex<ScreenWriter> = spin::Mutex::new(ScreenWriter {
         column_position: 0,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut VGABuffer) },

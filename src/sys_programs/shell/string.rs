@@ -1,4 +1,4 @@
-use crate::shell::shell::BUFFER_LENGTH;
+use super::BUFFER_LENGTH;
 
 /// Converts a &str reference to a char array of static size `BUFFER_LENGTH`
 pub fn to_char_array(str: &str) -> [char; BUFFER_LENGTH] {

@@ -1,6 +1,5 @@
 use super::screen_char::ScreenChar;
-use super::BUFFER_WIDTH;
-use super::BUFFER_HEIGHT;
+use super::{BUFFER_WIDTH, BUFFER_HEIGHT};
 use volatile::Volatile;
 
 /// VGA-Buffer, that is an array of screen chars and that represents the VGA-Hardware. <br>

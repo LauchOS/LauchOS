@@ -1,6 +1,6 @@
 use conquer_once::spin::OnceCell;
 use crossbeam_queue::ArrayQueue;
-use crate::{println, print, shell::shell};
+use crate::{println, print, sys_programs::shell::shell};
 use core::{pin::Pin, task::{Poll, Context}};
 use futures_util::{stream::{Stream, StreamExt}, task::AtomicWaker};
 use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
