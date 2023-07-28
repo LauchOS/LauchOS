@@ -13,14 +13,13 @@ pub struct ScancodeStream {
     _private: (),
 }
 
-impl ScancodeStream {
-    pub fn new() -> Self {
+lazy_static::lazy_static! {
+    pub static ref SCANCODE_STREAM: spin::Mutex<ScancodeStream> = spin::Mutex::new({
         SCANCODE_QUEUE.try_init_once(|| ArrayQueue::new(100))
-            .expect("ScancodeStream::new should only be called once");
+                .expect("ScancodeStream::new should only be called once");
         ScancodeStream { _private: () }
-    }
+    });
 }
-
 
 impl Stream for ScancodeStream {
     type Item = u8;
@@ -58,26 +57,24 @@ pub(crate) fn add_scancode(scancode: u8) {
     }
 }
 
-/// Keyboard Task
-pub async fn print_keypresses() {
-    let mut scancodes = ScancodeStream::new();
-    let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1,
-        HandleControl::Ignore);
-
-    while let Some(scancode) = scancodes.next().await {
-        if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
-            if let Some(key) = keyboard.process_keyevent(key_event) {
-                match key {
-                    // Will be changed in the future (shell is a program).
-                    // DecodedKey::Unicode(character) => {
-                    //     shell::input_key(character);
-                    // }
-                    DecodedKey::Unicode(character) => print!("{}", character),
-                    DecodedKey::RawKey(key) => {
-                        print!("{:?}", key);
-                    }
-                }
-            }
-        }
-    }
-}
+// /// Keyboard Task
+// pub async fn print_keypresses() {
+//     let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1,
+//         HandleControl::Ignore);
+//     while let Some(scancode) = SCANCODE_STREAM.lock().next().await {
+//         if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
+//             if let Some(key) = keyboard.process_keyevent(key_event) {
+//                 match key {
+//                     // Will be changed in the future (shell is a program).
+//                     // DecodedKey::Unicode(character) => {
+//                     //     shell::input_key(character);
+//                     // }
+//                     DecodedKey::Unicode(character) => print!("{}", character),
+//                     DecodedKey::RawKey(key) => {
+//                         print!("{:?}", key);
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
