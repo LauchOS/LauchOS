@@ -1,22 +1,20 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(lauch_os::test_runner)]
+#![test_runner(lauch_os::testing::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-use core::panic::PanicInfo;
-use bootloader::{BootInfo, entry_point};
+bootloader::entry_point!(kernel_main);
 
-entry_point!(kernel_main);
-
-fn kernel_main(boot_info: &'static BootInfo) -> ! {
+fn kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
+    lauch_os::init_kernel(boot_info);
     test_main();
-    loop {}
+    lauch_os::hlt_loop()
 }
 
 #[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    lauch_os::test_panic_handler(info);
+fn panic(info: &core::panic::PanicInfo) -> ! {
+    lauch_os::testing::test_panic_handler(info);
 }
 
 /// Call function `println!` without panicking

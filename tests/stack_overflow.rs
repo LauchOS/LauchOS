@@ -2,14 +2,10 @@
 #![no_main]
 #![feature(abi_x86_interrupt)]
 
-use core::panic::PanicInfo;
-use lauch_os::serial_print;
-use bootloader::{BootInfo, entry_point};
+bootloader::entry_point!(kernel_main);
 
-entry_point!(kernel_main);
-
-fn kernel_main(boot_info: &'static BootInfo) -> ! {
-    serial_print!("stack_overflow::stack_overflow...\t");
+fn kernel_main(_boot_info: &'static bootloader::BootInfo) -> ! {
+    lauch_os::serial_print!("stack_overflow::stack_overflow...\t");
 
     lauch_os::interrupt::gdt::init_gdt();
     init_test_idt();
@@ -20,25 +16,24 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 }
 
 #[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    lauch_os::test_panic_handler(info)
+fn panic(info: &core::panic::PanicInfo) -> ! {
+    lauch_os::testing::test_panic_handler(info)
 }
 
 /// Causing stack overflow
 #[allow(unconditional_recursion)]
 fn stack_overflow() {
-    stack_overflow(); // for each recursion, the return address is pushed
-    volatile::Volatile::new(0).read(); // prevent tail recursion optimizations
+    stack_overflow();
+    volatile::Volatile::new(0).read();
 }
 
 
 /**
  * Own IDT and handler
  */
-use lazy_static::lazy_static;
-use x86_64::structures::idt::InterruptDescriptorTable;
+use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref TEST_IDT: InterruptDescriptorTable = {
         let mut idt = InterruptDescriptorTable::new();
         unsafe {
@@ -55,14 +50,11 @@ pub fn init_test_idt() {
     TEST_IDT.load();
 }
 
-use lauch_os::{qemu::exit::exit_qemu, qemu::exit::QemuExitCode, serial_println};
-use x86_64::structures::idt::InterruptStackFrame;
-
 extern "x86-interrupt" fn test_double_fault_handler(
     _stack_frame: InterruptStackFrame,
     _error_code: u64,
 ) -> ! {
-    serial_println!("[ok]");
-    exit_qemu(QemuExitCode::Success);
+    lauch_os::serial_println!("[ok]");
+    lauch_os::qemu::exit::exit_qemu(lauch_os::qemu::exit::QemuExitCode::Success);
     loop {}
 }

@@ -1,5 +1,5 @@
 // Testing
-#![test_runner(lauch_os::test_runner)]
+#![test_runner(lauch_os::testing::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 #![feature(custom_test_frameworks)]
 
@@ -15,13 +15,13 @@ extern crate alloc;
 
 /// Entry point for kernel
 fn kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
-    lauch_os::init(boot_info);
+    lauch_os::init_kernel(boot_info);
 
-    // // Allocate value (example)
-    // let heap_value = Box::new(41);
+    // Allocate value (example)
+    // let heap_value = alloc::boxed::Box::new(41);
     // lauch_os::println!("heap_value at {:p}", heap_value);
 
-    // // Run two tasks (example)
+    // Run two tasks (example)
     // let mut executor = Executor::new();
     // executor.spawn(Task::new(example_task()));
     // executor.spawn(Task::new(print_keypresses()));
@@ -46,7 +46,7 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
-    lauch_os::test_panic_handler(info)
+    lauch_os::testing::test_panic_handler(info)
 }
 
 // /// Async function for example task

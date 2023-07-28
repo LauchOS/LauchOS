@@ -80,7 +80,7 @@ fn align_up(addr: usize, align: usize) -> usize {
     (addr + align - 1) & !(align - 1)
 }
 
-/// Init frame and basic allocator
+/// Init frame and basic allocators.
 pub fn init_allocators(boot_info: &'static BootInfo){
     use super::offset_page_table::init_opt;
     use frame_allocator::BootInfoFrameAllocator;

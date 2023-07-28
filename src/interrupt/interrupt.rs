@@ -23,7 +23,7 @@ lazy_static! {
 
 }
 
-/// Init IDT.
+/// Init Interrupt Descriptor Table.
 pub fn init_idt() {
     IDT.load();
 }
