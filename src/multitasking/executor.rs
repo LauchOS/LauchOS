@@ -1,4 +1,4 @@
-use super::tasks::{Task, TaskId};
+use super::task::{Task, TaskId};
 use alloc::{collections::BTreeMap, sync::Arc};
 use core::task::{Waker, Context, Poll};
 use crossbeam_queue::ArrayQueue;

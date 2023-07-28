@@ -1,5 +1,5 @@
 use core::task::Waker;
-use super::tasks::TaskId;
+use super::task::TaskId;
 use alloc::sync::Arc;
 use crossbeam_queue::ArrayQueue;
 use alloc::task::Wake;

@@ -8,6 +8,10 @@
 #![no_std]
 #![no_main]
 
+use lauch_os::multitasking::executor::Executor;
+use lauch_os::multitasking::task::Task;
+use lauch_os::multitasking::scancode_stream::print_keypresses;
+
 // Set main function (kernel entry point)
 bootloader::entry_point!(kernel_main);
 
@@ -16,10 +20,9 @@ fn kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
     lauch_os::init_kernel(boot_info);
 
     // Run two tasks (example)
-    // let mut executor = Executor::new();
-    // executor.spawn(Task::new(example_task()));
-    // executor.spawn(Task::new(print_keypresses()));
-    // executor.run();
+    let mut executor = Executor::new();
+    executor.spawn(Task::new(print_keypresses()));
+    executor.run();
 
     // Call tests, if running test env.
     #[cfg(test)]
@@ -42,14 +45,3 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
 fn panic(info: &core::panic::PanicInfo) -> ! {
     lauch_os::general::testing::test_panic_handler(info)
 }
-
-// /// Async function for example task
-// async fn async_number() -> u32 {
-//     42
-// }
-
-// /// Example Task
-// async fn example_task() {
-//     let number = async_number().await;
-//     lauch_os::println!("async number: {}", number);
-// }
