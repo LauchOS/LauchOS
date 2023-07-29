@@ -10,6 +10,7 @@ use super::BUFFER;
 
 /// Sets commands up, starts shell
 pub async fn start(){
+    SCANCODE_STREAM.try_lock();
     command_list::init_commands();
     print!("$ ");
     handle_keypresses().await;

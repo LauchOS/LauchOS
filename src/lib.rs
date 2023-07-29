@@ -37,8 +37,6 @@ pub fn init_kernel(boot_info: &'static bootloader::BootInfo){
     x86_64::instructions::interrupts::enable();
 
     memory::allocator::init_allocators(boot_info);
-
-    SCANCODE_STREAM.try_lock();
 }
 
 /// Basic passiv waiting for interrupts. <br>

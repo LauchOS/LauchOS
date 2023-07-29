@@ -19,14 +19,14 @@ bootloader::entry_point!(kernel_main);
 fn kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
     lauch_os::init_kernel(boot_info);
 
+    // Call tests, if running test env.
+    #[cfg(test)]
+    test_main();
+
     // Run two tasks (example)
     let mut executor = Executor::new();
     executor.spawn(Task::new(shell::start())); // Start shell
     executor.run();
-
-    // Call tests, if running test env.
-    #[cfg(test)]
-    test_main();
 
     lauch_os::hlt_loop();
 }
