@@ -56,25 +56,3 @@ pub(crate) fn add_scancode(scancode: u8) {
         println!("WARNING: scancode queue uninitialized");
     }
 }
-
-// /// Keyboard Task
-// pub async fn print_keypresses() {
-//     let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1,
-//         HandleControl::Ignore);
-//     while let Some(scancode) = SCANCODE_STREAM.lock().next().await {
-//         if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
-//             if let Some(key) = keyboard.process_keyevent(key_event) {
-//                 match key {
-//                     // Will be changed in the future (shell is a program).
-//                     // DecodedKey::Unicode(character) => {
-//                     //     shell::input_key(character);
-//                     // }
-//                     DecodedKey::Unicode(character) => print!("{}", character),
-//                     DecodedKey::RawKey(key) => {
-//                         print!("{:?}", key);
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
