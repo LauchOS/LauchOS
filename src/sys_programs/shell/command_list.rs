@@ -1,10 +1,10 @@
+use alloc::string::String;
+use alloc::vec::Vec;
 use crate::{print, println};
 use crate::io::interactions;
 use super::command::{Command, ExecuteFn};
-use super::BUFFER_LENGTH;
-use super::string;
 
-pub static mut COMMANDS: [Option<Command>; 3] = [None; 3]; // length currently static @TODO once alloc possible
+pub static mut COMMANDS: Vec<Command> = Vec::new();
 
 /// Registers all base commands for the shell.
 pub fn init_commands(){
@@ -15,33 +15,25 @@ pub fn init_commands(){
     ];
 
     unsafe {
-        for (i, &(name, execute_fn)) in commands.iter().enumerate() {
-            COMMANDS[i] = Some(Command::new(string::to_char_array(name), execute_fn));
+        for (_i, &(name, execute_fn)) in commands.iter().enumerate() {
+            COMMANDS.push(Command::new(String::from(name), execute_fn));
         }
     }
 }
 
-fn echo(args: &[[char; BUFFER_LENGTH]; 10]){
-    for j in 0..args.len() {
-        if args[j][0] == '\0'{
-            break;
-        }
-        for i in 0..args[j].len() {
-            if args[0][i] == '\0'{
-                break;
-            }
-            print!("{}", args[0][i]);
-        }
+fn echo(args: &Vec<String>){
+    for arg in args{
+        print!(" {}", arg);
     }
     print!("\n");
 }
 
-fn exit(_args: &[[char; BUFFER_LENGTH]; 10]){
+fn exit(_args: &Vec<String>){
     // @TODO exit application / shell
     println!("No way outta here...");
 }
 
-fn clear(_args: &[[char; BUFFER_LENGTH]; 10]){
+fn clear(_args: &Vec<String>){
     interactions::clear();
 }
 
