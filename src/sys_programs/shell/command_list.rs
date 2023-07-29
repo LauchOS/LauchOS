@@ -23,7 +23,7 @@ pub fn init_commands(){
 
 fn echo(args: &Vec<String>){
     for arg in args{
-        print!(" {}", arg);
+        print!("{}", arg);
     }
     print!("\n");
 }
