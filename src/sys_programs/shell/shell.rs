@@ -1,4 +1,12 @@
+use alloc::sync::Arc;
+use futures_util::StreamExt;
+use pc_keyboard::{DecodedKey, HandleControl, Keyboard, KeyCode, layouts, ScancodeSet1};
+use spin::Mutex;
 use crate::io::interactions;
+use crate::multitasking::executor::Executor;
+use crate::multitasking::scancode_stream::{SCANCODE_STREAM};
+use crate::multitasking::task::Task;
+use crate::print;
 use super::command_list;
 use super::command_list::COMMANDS;
 use super::string;
@@ -7,15 +15,37 @@ use super::{BUFFER, BUFFER_LENGTH, POINTER};
 /// Sets commands up, starts shell
 pub fn init_shell(){
     command_list::init_commands();
-    crate::print!("$ ");
+    print!("$ ");
+    let executor = Arc::new(Mutex::new(Executor::new()));
+    executor.lock().spawn(Task::new(handle_keypresses()));
+    executor.lock().run();
+}
+
+async fn handle_keypresses() {
+    let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1,
+                                     HandleControl::Ignore);
+    while let Some(scancode) = SCANCODE_STREAM.lock().next().await {
+        if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
+            if let Some(key) = keyboard.process_keyevent(key_event) {
+                match key {
+                    DecodedKey::Unicode(char) => process_unicode(char),
+                    DecodedKey::RawKey(key) => process_rawkey(key)
+                }
+            }
+        }
+    }
+}
+
+fn process_rawkey(key: KeyCode){
+    // @TODO
 }
 
 /// Processes Unicode type data from keyboard input. <br>
 /// Executes commands on enter. <br>
 /// Handles control actions.
-pub fn input_key(char: char){
+fn process_unicode(char: char){
     if !char.is_control() {
-        crate::print!("{}", char);
+        print!("{}", char);
         unsafe {
             BUFFER[POINTER] = char;
             POINTER += 1;
