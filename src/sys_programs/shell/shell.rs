@@ -1,25 +1,18 @@
-use alloc::string::{String};
-use alloc::sync::Arc;
+use alloc::string::String;
 use alloc::vec::Vec;
 use futures_util::StreamExt;
 use pc_keyboard::*;
-use spin::Mutex;
 use crate::io::interactions;
-use crate::multitasking::executor::Executor;
-use crate::multitasking::scancode_stream::{SCANCODE_STREAM};
-use crate::multitasking::task::Task;
-use crate::{print};
-use super::command_list;
-use super::command_list::COMMANDS;
-use super::{BUFFER};
+use crate::multitasking::scancode_stream::SCANCODE_STREAM;
+use crate::print;
+use super::command_list::{self, COMMANDS};
+use super::BUFFER;
 
 /// Sets commands up, starts shell
-pub fn init_shell(){
+pub async fn start(){
     command_list::init_commands();
     print!("$ ");
-    let executor = Arc::new(Mutex::new(Executor::new()));
-    executor.lock().spawn(Task::new(handle_keypresses()));
-    executor.lock().run();
+    handle_keypresses().await;
 }
 
 async fn handle_keypresses() {

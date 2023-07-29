@@ -10,7 +10,7 @@
 
 use lauch_os::multitasking::executor::Executor;
 use lauch_os::multitasking::task::Task;
-use lauch_os::sys_programs::shell;
+use lauch_os::sys_programs::shell::shell;
 
 // Set main function (kernel entry point)
 bootloader::entry_point!(kernel_main);
@@ -19,11 +19,9 @@ bootloader::entry_point!(kernel_main);
 fn kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
     lauch_os::init_kernel(boot_info);
 
-    shell::shell::init_shell();
-
     // Run two tasks (example)
     let mut executor = Executor::new();
-    // executor.spawn(Task::new(lauch_os::multitasking::scancode_stream::print_keypresses()));
+    executor.spawn(Task::new(shell::start())); // Start shell
     executor.run();
 
     // Call tests, if running test env.
