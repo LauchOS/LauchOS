@@ -29,13 +29,13 @@ async fn handle_keypresses() {
     }
 }
 
-pub fn add_listener(func: KeyboardListenerFn) {
+pub fn add_keyboard_listener(func: KeyboardListenerFn) {
     unsafe {
         LISTENERS.push(func);
     }
 }
 
-pub fn remove_listener(func: KeyboardListenerFn) {
+pub fn remove_keyboard_listener(func: KeyboardListenerFn) {
     unsafe {
         let search = LISTENERS.iter().position(|&x| x == func);
         match search {
