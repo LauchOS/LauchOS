@@ -35,7 +35,10 @@ jobs:
         run: cargo test
 
       - name: Create Release
-        if: success() && (github.ref == 'refs/tags/' || github.event_name == 'push') # Only runs on successful pushes or tag events
+        if: >
+         success() &&
+          (github.ref == 'refs/tags/' || github.event_name == 'push') && # Only runs on successful pushes or tag events
+          (github.event_name != 'pull_request') # Does not run on pull requests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: softprops/action-gh-release@v1
