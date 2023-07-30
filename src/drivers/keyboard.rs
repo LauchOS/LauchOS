@@ -20,7 +20,6 @@ async fn handle_keypresses() {
             if let Some(key) = keyboard.process_keyevent(key_event) {
                 unsafe {
                     for listener in &LISTENERS {
-                        print!("--");
                         listener(key);
                     }
                 }
