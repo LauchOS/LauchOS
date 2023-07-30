@@ -20,3 +20,28 @@ pub enum Color {
     Yellow = 0xe,
     White = 0xf,
 }
+
+impl Color{
+    /// Returns the matching Color case to the given string, NONE if no mathc is found
+    pub fn from_str(color_str: &str) -> Option<Color> {
+        match color_str.to_ascii_lowercase().as_str() {
+            "black" => Some(Color::Black),
+            "blue" => Some(Color::Blue),
+            "green" => Some(Color::Green),
+            "cyan" => Some(Color::Cyan),
+            "red" => Some(Color::Red),
+            "magenta" => Some(Color::Magenta),
+            "brown" => Some(Color::Brown),
+            "lightgray" => Some(Color::LightGray),
+            "darkgray" => Some(Color::DarkGray),
+            "lightblue" => Some(Color::LightBlue),
+            "lightgreen" => Some(Color::LightGreen),
+            "lightcyan" => Some(Color::LightCyan),
+            "lightred" => Some(Color::LightRed),
+            "pink" => Some(Color::Pink),
+            "yellow" => Some(Color::Yellow),
+            "white" => Some(Color::White),
+            _ => None,
+        }
+    }
+}
