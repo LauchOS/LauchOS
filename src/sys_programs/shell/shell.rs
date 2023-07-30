@@ -2,7 +2,7 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use futures_util::StreamExt;
 use pc_keyboard::*;
-use crate::drivers::keyboard::add_listener;
+use crate::drivers::keyboard::add_keyboard_listener;
 use crate::io::interactions;
 use crate::multitasking::scancode_stream::SCANCODE_STREAM;
 use crate::print;
@@ -14,7 +14,7 @@ pub async fn start() {
     SCANCODE_STREAM.try_lock();
     command_list::init_commands();
     print!("$ ");
-    add_listener(handle_input);
+    add_keyboard_listener(handle_input);
 }
 
 fn handle_input(key: DecodedKey) {
