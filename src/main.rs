@@ -8,7 +8,7 @@
 #![no_std]
 #![no_main]
 
-use lauch_os::drivers::{drivers};
+use lauch_os::drivers::drivers;
 use lauch_os::multitasking::executor::Executor;
 use lauch_os::multitasking::task::Task;
 use lauch_os::sys_programs::shell::shell;
