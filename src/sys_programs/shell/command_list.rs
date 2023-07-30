@@ -22,8 +22,10 @@ pub fn init_commands(){
 }
 
 fn echo(args: &Vec<String>){
-    for arg in args{
+
+    for (i, arg) in args.iter().enumerate(){
         print!("{}", arg);
+        if i < args.len() - 1 {print!(" ")}
     }
     print!("\n");
 }
