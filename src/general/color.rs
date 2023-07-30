@@ -22,6 +22,7 @@ pub enum Color {
 }
 
 impl Color{
+    /// Returns the matching Color case to the given string, NONE if no mathc is found
     pub fn from_str(color_str: &str) -> Option<Color> {
         match color_str.to_ascii_lowercase().as_str() {
             "black" => Some(Color::Black),

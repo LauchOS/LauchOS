@@ -80,6 +80,8 @@ impl ScreenWriter {
         }
     }
 
+    /// Changes foreground and background color of `screen_writer` <br>
+    /// Updates all vga_buffer chars to the new colors
     pub fn change_color(&mut self, color: ColorCode){
         self.color_code = color;
         for row in 0..BUFFER_HEIGHT {

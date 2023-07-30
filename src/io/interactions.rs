@@ -14,6 +14,10 @@ pub fn clear(){
         SCREENWRITER.lock().clear_row(i);
     }
 }
+
+/// Sets the `screen_writer` foreground and background `Color_Code` based on <br>
+/// `foreground: Color`, <br>
+/// `background: Color`
 pub fn change_color(foreground: Color, background: Color){
     SCREENWRITER.lock().change_color(ColorCode::new(foreground ,background));
 }
