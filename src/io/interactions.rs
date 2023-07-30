@@ -1,4 +1,6 @@
+use crate::general::color::Color;
 use crate::io::screen_writer::SCREENWRITER;
+use crate::io::vga_buffer::screen_char::ColorCode;
 use super::vga_buffer::BUFFER_HEIGHT;
 
 /// Removes the last input character and adjusts cursor position.
@@ -11,4 +13,7 @@ pub fn clear(){
     for i in 0..BUFFER_HEIGHT {
         SCREENWRITER.lock().clear_row(i);
     }
+}
+pub fn change_color(foreground: Color, background: Color){
+    SCREENWRITER.lock().change_color(ColorCode::new(foreground ,background));
 }

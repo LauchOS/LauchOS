@@ -79,6 +79,17 @@ impl ScreenWriter {
             self.buffer.screen_chars[last_row][self.column_position].write(blank);
         }
     }
+
+    pub fn change_color(&mut self, color: ColorCode){
+        self.color_code = color;
+        for row in 0..BUFFER_HEIGHT {
+            for col in 0..BUFFER_WIDTH {
+                let mut character = self.buffer.screen_chars[row][col].read();
+                character.color_code = color;
+                self.buffer.screen_chars[row][col].write(character);
+            }
+        }
+    }
 }
 
 impl Write for ScreenWriter {
