@@ -23,6 +23,7 @@ pub mod interrupt;
 pub mod memory;
 pub mod multitasking;
 pub mod sys_programs;
+pub mod drivers;
 
 extern crate alloc;
 use multitasking::scancode_stream::SCANCODE_STREAM;

@@ -8,6 +8,7 @@
 #![no_std]
 #![no_main]
 
+use lauch_os::drivers::drivers;
 use lauch_os::multitasking::executor::Executor;
 use lauch_os::multitasking::task::Task;
 use lauch_os::sys_programs::shell::shell;
@@ -25,6 +26,7 @@ fn kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
 
     // Run two tasks (example)
     let mut executor = Executor::new();
+    executor.spawn(Task::new(drivers::start())); // Start drivers
     executor.spawn(Task::new(shell::start())); // Start shell
     executor.run();
 
