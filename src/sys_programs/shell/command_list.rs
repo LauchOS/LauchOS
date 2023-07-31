@@ -51,7 +51,11 @@ fn set_color(args: &Vec<String>){
     }
     if let Some(text_color) = Color::from_str(&args[0]){
         if let Some(back_color) = Color::from_str(&args[1]){
-            interactions::change_color(text_color, back_color);
+            if text_color != back_color{
+                interactions::change_color(text_color, back_color);
+            }else{
+                println!("Invalid colors. Text color and background color shall not be the same.")
+            }
         }else{
             println!("Invalid background color. Get valid colors with 'list-colors'.")
         }
