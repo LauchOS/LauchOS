@@ -5,7 +5,7 @@ use pc_keyboard::*;
 use crate::drivers::keyboard::add_keyboard_listener;
 use crate::io::interactions;
 use crate::multitasking::scancode_stream::SCANCODE_STREAM;
-use crate::print;
+use crate::{print, println};
 use super::command_list::{self, COMMANDS};
 use super::BUFFER;
 
@@ -17,21 +17,28 @@ pub async fn start() {
     add_keyboard_listener(handle_input);
 }
 
-fn handle_input(key: DecodedKey) {
+fn handle_input(key: DecodedKey, modifiers: &Modifiers) {
     match key {
-        DecodedKey::Unicode(char) => process_unicode(char),
-        DecodedKey::RawKey(key) => process_rawkey(key)
+        DecodedKey::Unicode(char) => process_unicode(char, modifiers),
+        DecodedKey::RawKey(key) => process_rawkey(key, modifiers)
     }
 }
 
-fn process_rawkey(_key: KeyCode) {
+fn process_rawkey(_key: KeyCode, _modifiers: &Modifiers) {
     // @TODO
 }
 
 /// Processes Unicode type data from keyboard input. <br>
 /// Executes commands on enter. <br>
 /// Handles control actions.
-fn process_unicode(char: char) {
+fn process_unicode(char: char, modifiers: &Modifiers) {
+    if modifiers.lctrl && char == 'c' {
+        println!("^C");
+        unsafe { BUFFER.clear(); }
+        print!("$ ");
+        return;
+    }
+
     if !char.is_control() {
         print!("{}", char);
         unsafe {
