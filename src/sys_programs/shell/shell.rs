@@ -1,6 +1,5 @@
 use alloc::string::String;
 use alloc::vec::Vec;
-use futures_util::StreamExt;
 use pc_keyboard::*;
 use crate::drivers::keyboard::add_keyboard_listener;
 use crate::io::interactions;
