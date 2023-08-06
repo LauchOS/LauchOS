@@ -1,3 +1,5 @@
+use alloc::string::String;
+use alloc::vec;
 use alloc::vec::Vec;
 use futures_util::StreamExt;
 use pc_keyboard::{DecodedKey, HandleControl, Keyboard, KeyCode, KeyState, layouts, Modifiers, ScancodeSet1};
@@ -7,19 +9,46 @@ static mut LISTENERS: Vec<KeyboardListenerFn> = Vec::new();
 
 pub type KeyboardListenerFn = fn(key: DecodedKey, modifiers: &Modifiers);
 
+pub enum LayoutType{
+    US,
+    UK
+}
+
+impl LayoutType {
+    pub fn get_layouts() -> Vec<String>{
+        vec!(String::from("US"), String::from("UK"))
+    }
+}
+
 pub async fn start() {
     handle_keypresses().await;
 }
 
 async fn handle_keypresses() {
-    let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1,
+    let mut keyboard_us = Keyboard::new(layouts::Us104Key, ScancodeSet1,
                                      HandleControl::Ignore);
+    let mut keyboard_uk = Keyboard::new(layouts::Uk105Key, ScancodeSet1,
+                                        HandleControl::Ignore);
     let mut modifiers = Modifiers{lshift: false, rshift: false, lctrl: false, rctrl: false, numlock: false, capslock: false, alt_gr: false };
+    let mut current_layout: LayoutType = LayoutType::UK;
+
+
     while let Some(scancode) = SCANCODE_STREAM.lock().next().await {
-        if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
+
+        let key_event_res = match current_layout {
+            LayoutType::US => keyboard_us.add_byte(scancode),
+            LayoutType::UK => keyboard_uk.add_byte(scancode)
+        };
+        if let Ok(Some(key_event)) = key_event_res{
             set_modifier(&mut modifiers, key_event.state == KeyState::Down, key_event.code);
+
             if key_event.state == KeyState::Down {
-                if let Some(key) = keyboard.process_keyevent(key_event) {
+                let key_res = match current_layout {
+                    LayoutType::US => keyboard_us.process_keyevent(key_event),
+                    LayoutType::UK => keyboard_uk.process_keyevent(key_event)
+                };
+
+                if let Some(key) = key_res {
                     unsafe {
                         for listener in &LISTENERS {
                             listener(key, &modifiers);
